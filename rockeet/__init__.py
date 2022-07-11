@@ -14,6 +14,14 @@ handler.setFormatter(logging.Formatter("%(asctime)s | %(levelname)s | %(message)
 logger.addHandler(handler)
 logger.setLevel(logging.WARNING)
 
+session = None
+
+def setSession(newSession=None):
+    global session
+    session = newSession
+
+def getSession():
+    return session
 
 def setToken(newToken: str):
     logger.debug(f"setting token to {newToken[:15]}xxx")
@@ -31,3 +39,4 @@ from . import Image
 from . import Audio
 from . import Video
 from . import Session
+from . import Assistant

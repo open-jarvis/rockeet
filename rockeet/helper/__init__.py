@@ -34,16 +34,26 @@ class Response:
     def result(self):
         return self.data["result"]
 
-    def __getattr__(self, key: str):
-        return self.data[key]
-
     def unpack(self, *params):
         if isinstance(self.result, dict):
             return { k:v for k,v in self.result.items() if k in params }
         elif isinstance(self.result, list):
             raise ValueError("cannot unpack list")
         return { k: self.result for k in params }
-    
+
+    def items(self):
+        return self.result.items()
+
+    def __len__(self):
+        return len(self.result)
+
+    def __getattr__(self, key: str):
+        print(self.data, key)
+        return self.data[key]
+
+    def __getitem__(self, item):
+        return self.result[item]
+
     def __str__(self) -> str:
         return json.dumps(self.result, indent=4)
 
@@ -52,7 +62,7 @@ class Response:
 def isFileId(tester: str):
     if not isinstance(tester, str):
         return False
-    return bool(re.match(r'^(f_|p_)[a-fA-F0-9]+$', tester))
+    return bool(re.match(r'^(f_|p_|a_)[a-fA-F0-9]+$', tester))
 
 def isLocalFile(tester: str):
     if not isinstance(tester, str):
