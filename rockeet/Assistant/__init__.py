@@ -48,6 +48,14 @@ from ._slot._add import addSlot
 from ._slot._delete import deleteSlot
 from ._slot._list import allSlots
 
+new = newAssistant
+list = allAssistants
+delete = deleteAssistant
+
+query = parse
+ask = parse
+
+
 
 import sys
 

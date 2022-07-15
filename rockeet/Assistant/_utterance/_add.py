@@ -13,7 +13,7 @@ def addUtterance(assistantId: str, intentName: str, utterance: Union[list,str], 
     assert isinstance(assistantId, str) and isFileId(assistantId), "assistantId parameter must be a valid assistant id"
     assert isinstance(intentName, str), "intentName parameter must be a string"
     assert isinstance(utterance, list) or isinstance(utterance, str), "utterance parameter must be either list or string"
-    assert isinstance(utterance, int) or index is None, "index parameter must be integer or None"
+    assert isinstance(index, int) or index is None, "index parameter must be integer or None"
 
     body = {
         **kwargs,

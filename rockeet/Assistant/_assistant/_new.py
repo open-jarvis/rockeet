@@ -106,8 +106,15 @@ Want to initialize an existing assistant?
     def train(self) -> Response:
         return _train(self.id)
     
-    def parse(self, input: str) -> Response:
-        return _parse(self.id, input)
+    def parse(self, input: str, allScores: bool = False) -> Response:
+        return _parse(self.id, input, allScores)
+
+    def query(self, input: str, allScores: bool = False) -> Response:
+        return self.parse(input, allScores)
+    
+    def ask(self, input: str, allScores: bool = False) -> Response:
+        return self.parse(input, allScores)
+
 
 
 def newAssistant(name: str, language: Literal["en", "de", "es", "fr", "it"], metadata: dict = {}) -> Assistant:
