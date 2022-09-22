@@ -9,13 +9,14 @@ from rockeet.helper import Response, endpoint, isFileId
 
 from rockeet.Assistant._entity._add import addEntity as _addEntity
 from rockeet.Assistant._entity._delete import deleteEntity as _deleteEntity
-from rockeet.Assistant._entity._export import exportEntity as _exportEntity
+from rockeet.Assistant._entity._get import getEntity as _getEntity
 from rockeet.Assistant._entity._list import allEntites as _allEntites
 
 from rockeet.Assistant._utterance._add import addUtterance as _addUtterance
 from rockeet.Assistant._utterance._delete import deleteUtterance as _deleteUtterance
 from rockeet.Assistant._utterance._list import allUtterances as _allUtterances
 
+from rockeet.Assistant._intent._get import getIntent as _getIntent
 from rockeet.Assistant._intent._add import addIntent as _addIntent
 from rockeet.Assistant._intent._delete import deleteIntent as _deleteIntent
 from rockeet.Assistant._intent._list import allIntents as _allIntents
@@ -27,6 +28,9 @@ from rockeet.Assistant._slot._list import allSlots as _allSlots
 from rockeet.Assistant._assistant._train import train as _train
 from rockeet.Assistant._assistant._parse import parse as _parse
 from rockeet.Assistant._assistant._delete import deleteAssistant as _deleteAssistant
+from rockeet.Assistant._assistant._export import exportAssistant as _exportAssistant
+from rockeet.Assistant._assistant._export import getAssistant as _getAssistant
+from rockeet.Assistant._assistant._import import importAssistant as _importAssistant
 
 
 class Assistant(sys.modules[__name__].__class__):
@@ -57,31 +61,44 @@ Want to initialize an existing assistant?
         return f"Assistant(id={self.id})"
 
 
+    @classmethod
+    def load(cls, data):
+        return _importAssistant(data)
+
+    def export(self):
+        return _exportAssistant(self.id)
+
+    def get(self):
+        return _getAssistant(self.id)
+
     def addEntity(self, name: str, examples: list, autoExtend: bool = True, useSynonyms: bool = True, strictness: float = 0.8, metadata: dict = {}) -> Response:
         return _addEntity(self.id, name, examples, autoExtend, useSynonyms, strictness, metadata)
 
     def deleteEntity(self, name: str, **kwargs) -> Response:
         return _deleteEntity(self.id, name, **kwargs)
     
-    def exportEntity(self, name: str, **kwargs) -> object:
-        return _exportEntity(self.id, name, **kwargs)
+    def getEntity(self, name: str, **kwargs) -> object:
+        return _getEntity(self.id, name, **kwargs)
 
-    def allEntites(self, expand: list[Literal["examples", "autoExtend", "useSynonyms", "strictness", "metadata"]] = []) -> Response:
+    def allEntites(self, expand: list[Literal["examples", "autoExtend", "useSynonyms", "strictness", "metadata"]] = ["examples", "autoExtend", "useSynonyms", "strictness"]) -> Response:
         return _allEntites(self.id, expand)
 
 
-    def addIntent(self, name: str, slots: dict, utterances: list, metadata: dict = {}) -> Response:
-        return _addIntent(self.id, name, slots, utterances, metadata)
+    def addIntent(self, intentName: str, slots: dict, utterances: list, metadata: dict = {}) -> Response:
+        return _addIntent(self.id, intentName, slots, utterances, metadata)
 
-    def deleteIntent(self, name: str, **kwargs) -> Response:
-        return _deleteIntent(self.id, name, **kwargs)
+    def deleteIntent(self, intentName: str, **kwargs) -> Response:
+        return _deleteIntent(self.id, intentName, **kwargs)
 
-    def allIntents(self, expand: list[Literal["slots", "utterances", "metadata"]] = []) -> Response:
+    def allIntents(self, expand: list[Literal["slots", "utterances", "metadata"]] = ["slots", "utterances"]) -> Response:
         return _allIntents(self.id, expand)
 
+    def getIntent(self, intentName: str, expand: list[Literal] = []):
+        return _getIntent(self.id, intentName, expand)
 
-    def addSlot(self, intentName: str, entityName: str, slotName: str, **kwargs) -> Response:
-        return _addSlot(self.id, intentName, entityName, slotName, **kwargs)
+
+    def addSlot(self, intentName: str, slotName: str, entityName: str, **kwargs) -> Response:
+        return _addSlot(self.id, intentName, slotName, entityName, **kwargs)
 
     def deleteSlot(self, intentName: str, slotName: str, **kwargs) -> Response:
         return _deleteSlot(self.id, intentName, slotName, **kwargs)

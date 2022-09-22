@@ -7,7 +7,7 @@ import os
 import logging
 
 
-baseUrl = "https://api.friday.fipsi.at/v1"
+baseUrl = "http://api.rockeet.ai/v1"
 logger = logging.getLogger("rockeet")
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter("%(asctime)s | %(levelname)s | %(message)s"))
@@ -40,3 +40,5 @@ from . import Audio
 from . import Video
 from . import Session
 from . import Assistant
+
+from . import Debug

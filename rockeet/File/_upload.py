@@ -5,7 +5,7 @@ Copyright (c) 2022 Philipp Scheer
 
 import requests
 from rockeet import getToken, baseUrl, logger
-from rockeet.helper import Response
+from rockeet.helper import RawStringResponse, Response
 
 
 def upload(localPath: str) -> Response:
@@ -16,4 +16,6 @@ def upload(localPath: str) -> Response:
         files   = { "file": open(localPath, "rb") }, 
     ).json()
 
-    return Response(resp, "/file", None, "post")
+
+    res = RawStringResponse(resp, "/file", None, "post")
+    return res

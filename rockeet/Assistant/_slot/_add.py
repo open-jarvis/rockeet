@@ -6,7 +6,7 @@ Copyright (c) 2022 Philipp Scheer
 from rockeet.helper import Response, endpoint, isFileId
 
 
-def addSlot(assistantId: str, intentName: str, entityName: str, slotName: str, **kwargs) -> Response:
+def addSlot(assistantId: str, intentName: str, slotName: str, entityName: str, **kwargs) -> Response:
     """Add a slot to an intent
     """
 

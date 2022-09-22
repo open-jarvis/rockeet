@@ -5,7 +5,7 @@ Copyright (c) 2022 Philipp Scheer
 
 from typing import Union
 from rockeet import logger
-from rockeet.helper import Response, endpoint, isLocalFile
+from rockeet.helper import RawListResponse, Response, endpoint, isLocalFile
 from rockeet.File import upload, delete
 
 
@@ -24,14 +24,14 @@ def identify(fileId: Union[Response,str],
     if isinstance(fileId, Response):
         fileId = fileId.unpack("fileId")["fileId"]
 
-    if isinstance(fileId, str) and isLocalFile(fileId):
+    if isLocalFile(fileId):
         fileId = upload(fileId).unpack("fileId")["fileId"]
         deleteUploadedFile = True
 
     for i in range(len(profiles)):
         profile = profiles[i]
         if isinstance(profile, Response):
-            profiles[i] = profile.unpack("fileId")["fileId"]
+            profiles[i] = profile.unpack("profile")["profile"]
 
     logger.info(f"identify people in {fileId} (out of {len(profiles)} possibilities")
 
@@ -45,7 +45,7 @@ def identify(fileId: Union[Response,str],
            }
     if scale is not None: obj["scale"] = scale
 
-    result = endpoint("/image/identify", obj)
+    result = endpoint("/image/identify", obj, ResponseClass=RawListResponse)
 
     if deleteUploadedFile:
         delete(fileId)

@@ -26,6 +26,8 @@ assistant/parse POST               - done
 
 
 from ._assistant._new import newAssistant, Assistant
+from ._assistant._export import exportAssistant, getAssistant
+from ._assistant._import import importAssistant
 from ._assistant._list import allAssistants
 from ._assistant._delete import deleteAssistant
 from ._assistant._train import train
@@ -33,13 +35,14 @@ from ._assistant._parse import parse
 
 from ._entity._add import addEntity
 from ._entity._delete import deleteEntity
-from ._entity._export import exportEntity
+from ._entity._get import getEntity
 from ._entity._list import allEntites
 
 from ._utterance._add import addUtterance
 from ._utterance._delete import deleteUtterance
 from ._utterance._list import allUtterances
 
+from ._intent._get import getIntent
 from ._intent._add import addIntent
 from ._intent._delete import deleteIntent
 from ._intent._list import allIntents
@@ -49,8 +52,11 @@ from ._slot._delete import deleteSlot
 from ._slot._list import allSlots
 
 new = newAssistant
+create = newAssistant
 list = allAssistants
 delete = deleteAssistant
+
+load = importAssistant
 
 query = parse
 ask = parse

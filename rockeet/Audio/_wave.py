@@ -3,10 +3,11 @@ Copyright (c) 2022 Philipp Scheer
 """
 
 
+import os
 import mimetypes
 from tempfile import NamedTemporaryFile
 from typing import Union
-from rockeet.helper import Response, endpoint, isFileId, isLocalFile
+from rockeet.helper import RawStringResponse, Response, endpoint, isFileId, isLocalFile
 from rockeet.File import upload, delete
 from rockeet import logger
 
@@ -22,11 +23,12 @@ def wave(localFile: Union[str, Response], contentType: str = None, doLocally: bo
         logger.warn("cannot convert remote file on local system, falling back to online conversion")
 
     if isLocalFile(localFile) and doLocally:
-        contentType_ = mimetypes.guess_type(localFile)
+        contentType_, _ = mimetypes.guess_type(localFile)
         logger.debug(f"detected contentType: {contentType_}")
         try:
             from pydub import AudioSegment
             convert = True
+            fn = None
             if contentType_ == "audio/mpeg":
                 fn = AudioSegment.from_mp3
             elif contentType_ == "video/x-flv":
@@ -38,15 +40,21 @@ def wave(localFile: Union[str, Response], contentType: str = None, doLocally: bo
             elif contentType_ == "audio/wav":
                 fn = AudioSegment.from_wav
                 convert = False
+
+            if fn is None:
+                raise RuntimeError(f"failed to convert file offline, could not guess mimetype for {localFile}")
+
             sound = fn(localFile)
 
             if convert:
-                tmpFile = NamedTemporaryFile(mode="wb", delete=False)
+                tmpFile = NamedTemporaryFile(mode="wb", delete=False, suffix=f"_{os.path.basename(localFile)}.wav")
                 logger.debug(f"temporary file created: {tmpFile.name}")
-                sound.export(tmpFile.name, format="wav")
+                sound.get(tmpFile.name, format="wav")
                 localFile = tmpFile.name
             else:
                 logger.warn("skipping conversion, file is already in wav format")
+            
+            return upload(localFile)
         except ImportError:
             logger.warn("pydub is not installed, falling back to online conversion\ninstall pydub with `pip install pydub`")
             doLocally = False
@@ -70,12 +78,12 @@ def wave(localFile: Union[str, Response], contentType: str = None, doLocally: bo
         else:
             logger.warn("invalid contentType, must be in [\"audio/mpeg\", \"video/x-flv\", \"audio/ogg\", \"audio/pcm\", \"audio/wav\"], falling back to default")
 
-    result = endpoint(f"/audio/wave", body=body, method="post")
+    result = endpoint(f"/audio/wave", body=body, method="post", ResponseClass=RawStringResponse)
 
     if uploadedFile and not keepOriginal:
         logger.info("deleting uploaded audio file")
         delete(localFile)
-    
+
     return result
 
 

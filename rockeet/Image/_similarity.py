@@ -5,7 +5,19 @@ Copyright (c) 2022 Philipp Scheer
 
 from typing import Union
 from rockeet import logger
-from rockeet.helper import Response, endpoint
+from rockeet.helper import RawListResponse, RawNumberResponse, Response, endpoint
+
+
+class CustomResponse(Response):
+    def __float__(self):
+        if isinstance(self.result, dict):
+            return self.result["similarity"]
+        return self.result
+
+    def __list__(self):
+        if isinstance(self.result, dict):
+            return [self.result, self.result]
+        return self.result["range"]
 
 
 def similarity(profile1: Union[Response,str], profile2: Union[Response,str], range: bool = False, **kwargs) -> Response:
@@ -40,4 +52,4 @@ def similarity(profile1: Union[Response,str], profile2: Union[Response,str], ran
         "range": range,
         "profile1": profile1["profile"] if isinstance(profile1, dict) else profile1,
         "profile2": profile2["profile"] if isinstance(profile2, dict) else profile2
-    })
+    }, ResponseClass=CustomResponse)

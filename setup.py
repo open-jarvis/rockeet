@@ -16,6 +16,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
 with open(_ + "/requirements.txt", "r", encoding="utf-16") as fh:
     requirements = [ line.strip() for line in fh.readlines() if not line.startswith("#") and not line.startswith("-e") ]
 
+with open(_ + "/requirements.debug.txt", "r", encoding="utf-16") as fh:
+    debugRequirements = [ line.strip() for line in fh.readlines() if not line.startswith("#") and not line.startswith("-e") ]
+
 
 setuptools.setup(
     name="rockeet",
@@ -41,4 +44,7 @@ setuptools.setup(
         "Operating System :: MacOS",
     ],
     python_requires='>=3.6',
+    extras_require={
+        "debug": debugRequirements
+    }
 )
